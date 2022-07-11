@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createTRPCClient } from '@trpc/client';
-import { httpLink } from '@trpc/client/links/httpLink';
-import { splitLink } from '@trpc/client/links/splitLink';
-import { createWSClient, wsLink } from '@trpc/client/links/wsLink';
-import AbortController from 'abort-controller';
-import fetch from 'node-fetch';
-import ws from 'ws';
-import type { AppRouter } from './server';
+import { createTRPCClient } from "@trpc/client";
+import { httpLink } from "@trpc/client/links/httpLink";
+import { splitLink } from "@trpc/client/links/splitLink";
+import { createWSClient, wsLink } from "@trpc/client/links/wsLink";
+import AbortController from "abort-controller";
+import fetch from "node-fetch";
+import ws from "ws";
+import type { AppRouter } from "./server";
 
 // polyfill fetch & websocket
 const globalAny = global as any;
@@ -24,7 +24,7 @@ async function main() {
       // call subscriptions through websockets and the rest over http
       splitLink({
         condition(op) {
-          return op.type === 'subscription';
+          return op.type === "subscription";
         },
         true: wsLink({
           client: wsClient,
@@ -36,24 +36,24 @@ async function main() {
     ],
   });
 
-  const helloResponse = await client.query('hello', {
-    name: 'world',
+  const helloResponse = await client.query("hello", {
+    name: "world",
   });
 
-  console.log('helloResponse', helloResponse);
+  console.log("helloResponse", helloResponse);
 
-  const createPostRes = await client.mutation('createPost', {
-    title: 'hello world',
-    content: 'check out tRPC.io',
+  const createPostRes = await client.mutation("createPost", {
+    title: "hello world",
+    content: "check out tRPC.io",
   });
-  
-  console.log('createPostResponse', createPostRes);
+
+  console.log("createPostResponse", createPostRes);
 
   let count = 0;
-  const unsub = client.subscription('randomNumber', null, {
+  const unsub = client.subscription("randomNumber", null, {
     onNext(data) {
       // ^ note that `data` here is inferred
-      console.log('received', data);
+      console.log("received", data);
       count++;
       if (count > 3) {
         // stop after 3 pulls
@@ -61,10 +61,10 @@ async function main() {
       }
     },
     onError(err) {
-      console.error('error', err);
+      console.error("error", err);
     },
     onDone() {
-      console.log('done called - closing websocket');
+      console.log("done called - closing websocket");
       wsClient.close();
     },
   });
